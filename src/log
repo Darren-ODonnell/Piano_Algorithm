@@ -1,0 +1,31 @@
+Scales{cMinor=[C, D, E^, F, G, a^, b^, C],
+ cMajor=[C, D, E, F, G, a, b, c],
+ dMinor=[D, E, F, G, a, b, c#, d],
+ dMajor=[D, E, F#, G, a, b, c#, d],
+ eMinor=[E, F#, G, a, b, c#, d#, e],
+ eMajor=[E, F#, G#, a, b, c#, d#, e],
+ fMinor=[F, G, a^, b^, c, d^, e^, f],
+ fMajor=[F, G, a, b^, c, d, e, f],
+ gMinor=[G, a, b^, c, d, e^, f#, g],
+ gMajor=[G, a, b, c, d, e, f#, a],
+ aMinor=[A, B, C, D, E, F, G, a],
+ aMajor=[A, B, C#, D, E, F#, G#, a],
+ bMinor=[B, C#, D, E, F#, G, a, b],
+ bMajor=[B, C#, D#, E, F#, G#, a#, b]}
+A Major Arpeggio: [A, C#, E, a]
+
+
+New Song in A Major Scale:
+
+Left Hand:
+Chord0: [A, B, E, F#, a]
+Chord1: [A, B, E, F#, a]
+Chord2: [A, B, E, F#, a]
+Chord3: [A, B, E, F#, a]
+Chord4: [A, B, E, F#, a]
+
+
+Right Hand:
+[a, A, E, B, G#, D, a, F#, A, E, G#, a, C#, E, A, D, D, E, G#, B]
+
+Process finished with exit code 0
