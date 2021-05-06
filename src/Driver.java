@@ -7,6 +7,8 @@ public class Driver {
     Instrument[] instr = midiSynth.getDefaultSoundbank().getInstruments();
     MidiChannel[] mChannels = midiSynth.getChannels();
 
+    Time time;
+
 
     javax.sound.midi.Synthesizer synthesizer = MidiSystem.getSynthesizer();
 
@@ -17,16 +19,19 @@ public class Driver {
 
     String[] scale = scales.getRandomScale();
 
-    int chordAmount = 10;
-    int melodyLength = 10;
+    int timeSignature = 8;
+    int chordAmount = 4;
+    int melodyLength = 4;
     int chordSizeMax = 2;
+    int noteDuration = 250;
 
     public Driver() throws MidiUnavailableException {
         init();
+        initTiming();
 
 
         //Pick scale to make a random song
-
+        time = new Time();
         r = new Random();
         String[] melody = new String[20];
         ArrayList<ArrayList<String>> chords = new ArrayList<>();
@@ -47,8 +52,14 @@ public class Driver {
 
         melody = createMelody();
 
+//        String[][] strings = getQuavers(melody);
+        String[][] strings = getCrotchets(melody);
+
+
         display(melody, chords);
         playMusic(melody, chords);
+
+
 
         //All below is synth work
         Instrument[] instruments = synthesizer.getDefaultSoundbank().getInstruments();
@@ -57,6 +68,12 @@ public class Driver {
         synthesizer.loadInstrument(instruments[0]);
 
 
+    }
+
+    private void initTiming(){
+        Time.setTimeSignature(timeSignature);
+        chordAmount *= timeSignature - timeSignature/2; //4 chords per 8 note signature
+        melodyLength *= timeSignature; //8 notes per signature
     }
 
     private void init() {
@@ -95,7 +112,6 @@ public class Driver {
     }
 
     private void playMusic(String[] melody, ArrayList<ArrayList<String>> chords) throws MidiUnavailableException {
-        int sleepTime = 200;
 
         //Middle C is 60 // 24 is start of piano at C// 107 is end of piano at B
 
@@ -104,9 +120,9 @@ public class Driver {
 
             if(Character.isLowerCase(note)) {// lower case character inside a chord signifies that the note is in the next chord
                 melody[i] = melody[i].toUpperCase();
-                playNote(melody[i], sleepTime, 3);
+                playNote(melody[i], time.getNoteDuration(), 3);
             }else {
-                playNote(melody[i], sleepTime, 2);
+                playNote(melody[i],time.getNoteDuration(), 2);
             }
        }
         for(int i = 0; i < chords.size(); i++){
@@ -114,7 +130,8 @@ public class Driver {
                 //chords.get(i).set(x , chords.get(i).get(x).toUpperCase());
 
             }
-            playChord(chords.get(i), sleepTime,3);
+            playChord(chords.get(i), time.getNoteDuration(),3);
+
         }
     }
 
@@ -192,4 +209,48 @@ public class Driver {
             e.printStackTrace();
         }
     }
+
+    public String[][] getQuavers(String[] notes){
+        int quaver = 0;
+        return method(notes, quaver);
+    }
+    public String[][] getCrotchets(String[] notes){
+        int crotchet = 1;
+        return method(notes, crotchet);
+    }
+
+    public String[][] getMinims(String[] notes) {
+        int minim = 2;
+        return method(notes, minim);
+    }
+
+    public String[][] getSemiBreves(String[] notes) {
+        int semibreve = 3;
+        return method(notes, semibreve);
+    }
+
+    public String[][] method(String[] notes, int note){
+        int timeCounter = notes.length/Time.timeSignature/Time.noteLengths[note];
+        String[][] melody = new String[timeCounter][Time.timeSignature];
+            time.setNoteDuration(Time.noteLengths[note]);// noteLength[0] is quaver
+
+        /**
+         *  Outer loop, needs to go 4 times
+         *  Inner loop, goes 8 times for every iteration of the outer loop
+         */
+            for(int i = 0; i < timeCounter; i++){
+            for(int x = 0; x < Time.timeSignature/Time.noteLengths[note]; x++){
+                melody[i][x] = notes[(Time.timeSignature*i)+x];
+                System.out.println("note:" + notes[(Time.timeSignature*i)+x]);
+                System.out.println("Size of notes " + notes.length);
+            }
+        }
+
+            System.out.println(Arrays.deepToString(melody));
+            return melody;
+    }
+
+
+
+
 }
