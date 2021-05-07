@@ -2,28 +2,25 @@ import javax.sound.midi.*;
 import java.util.*;
 
 public class Driver {
-    Synthesizer midiSynth = MidiSystem.getSynthesizer();
-    HashMap<String, Integer> notes = new HashMap<>();
-    Instrument[] instr = midiSynth.getDefaultSoundbank().getInstruments();
-    MidiChannel[] mChannels = midiSynth.getChannels();
+    private final Synthesizer midiSynth = MidiSystem.getSynthesizer();
+    private final HashMap<String, Integer> notes = new HashMap<>();
+    private final Instrument[] instr = midiSynth.getDefaultSoundbank().getInstruments();
+    private final MidiChannel[] mChannels = midiSynth.getChannels();
+
+    private final Random r;
 
     Time time;
-
-
-    javax.sound.midi.Synthesizer synthesizer = MidiSystem.getSynthesizer();
-
-    Random r;
     Scales scales = new Scales();
     UsingScales usingScales = new UsingScales();
 
 
-    String[] scale = scales.getRandomScale();
+    private String[] scale = scales.getRandomScale();
 
-    int timeSignature = 8;
-    int chordAmount = 4;
-    int melodyLength = 4;
-    int chordSizeMax = 2;
-    int noteDuration = 250;
+    private int timeSignature = 8;
+    private int chordAmount = 4;
+    private int melodyLength = 1;
+    private int chordSizeMax = 2;
+
 
     public Driver() throws MidiUnavailableException {
         init();
@@ -52,8 +49,7 @@ public class Driver {
 
         melody = createMelody();
 
-//        String[][] strings = getQuavers(melody);
-        String[][] strings = getCrotchets(melody);
+        String[][] strings = getQuavers(melody);
 
 
         display(melody, chords);
@@ -62,6 +58,7 @@ public class Driver {
 
 
         //All below is synth work
+        Synthesizer synthesizer = MidiSystem.getSynthesizer();
         Instrument[] instruments = synthesizer.getDefaultSoundbank().getInstruments();
         MidiChannel[] mChannels = synthesizer.getChannels();
 
@@ -114,44 +111,63 @@ public class Driver {
     private void playMusic(String[] melody, ArrayList<ArrayList<String>> chords) throws MidiUnavailableException {
 
         //Middle C is 60 // 24 is start of piano at C// 107 is end of piano at B
+        for(int x = 0; x < chords.size(); x++) {
+            playChord(chords.get(x), time.getNoteDuration() * 2, 3);
 
-        for(int i = 0; i < melody.length; i++) {
-            char note = melody[i].charAt(0);
+            for (int i = 0; i < melody.length; i++) {
+                char note = melody[i].charAt(0);
 
-            if(Character.isLowerCase(note)) {// lower case character inside a chord signifies that the note is in the next chord
-                melody[i] = melody[i].toUpperCase();
-                playNote(melody[i], time.getNoteDuration(), 3);
-            }else {
-                playNote(melody[i],time.getNoteDuration(), 2);
+                if (Character.isLowerCase(note)) {// lower case character inside a chord signifies that the note is in the next chord
+                    melody[i] = melody[i].toUpperCase();
+                    playNote(melody[i], time.getNoteDuration(), 3);
+                } else {
+                    playNote(melody[i], time.getNoteDuration(), 2);
+                }
             }
-       }
-        for(int i = 0; i < chords.size(); i++){
-            for(int x = 0 ; x < chords.get(i).size(); x++) {
-                //chords.get(i).set(x , chords.get(i).get(x).toUpperCase());
-
-            }
-            playChord(chords.get(i), time.getNoteDuration(),3);
-
+            endChord(chords.get(x));
         }
+//        for(int i = 0; i < melody.length; i++) {
+//            char note = melody[i].charAt(0);
+//
+//            if(Character.isLowerCase(note)) {// lower case character inside a chord signifies that the note is in the next chord
+//                melody[i] = melody[i].toUpperCase();
+//                playNote(melody[i], time.getNoteDuration(), 3);
+//            }else {
+//                playNote(melody[i],time.getNoteDuration(), 2);
+//            }
+//       }
+//        for(int i = 0; i < chords.size(); i++){
+//            for(int x = 0 ; x < chords.get(i).size(); x++) {
+//                //chords.get(i).set(x , chords.get(i).get(x).toUpperCase());
+//
+//            }
+//            playChord(chords.get(i), time.getNoteDuration(),3);
+//
+//        }
     }
 
     private void playNote(String note, int sleepTime, int multiplier){
 
         final int FIRST_NOTE = 24;
         System.out.println(note);
-        mChannels[0].noteOn(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 20);//On channel 0, play note number 60 with velocity 100
+        mChannels[0].noteOn(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 30);//On channel 0, play note number 60 with velocity 100
         sleep(sleepTime);
-        mChannels[0].noteOff(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 20);//turn off the note
+        mChannels[0].noteOff(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 30);//turn off the note
     }
 
+    private void endChord(List<String> chord){
+        final int FIRST_NOTE = 24;
+        for(int i = 0; i < chord.size(); i++) {
+            mChannels[0].noteOff(FIRST_NOTE + (notes.get(chord.get(i))));//turn off the note
+        }
 
+    }
     private void playChord(List<String> chord, int sleepTime, int multiplier) throws MidiUnavailableException {
         final int FIRST_NOTE = 24;
-
-        System.out.println("Chord: ");
+        System.out.print("\n" + "chord: ");
         for(int i = 0; i < chord.size(); i++) {
 
-            System.out.println(chord.get(i));
+            System.out.print(chord.get(i) + " ");
 
             char note = chord.get(i).charAt(0);
 
@@ -162,14 +178,12 @@ public class Driver {
                 mChannels[0].noteOn(FIRST_NOTE + (notes.get(chord.get(i)) + (12 * multiplier)), 20);
             }
         }
-        System.out.println();
 
-        sleep(sleepTime);
-        for(int i = 0; i < chord.size(); i++) {
-            mChannels[0].noteOff(FIRST_NOTE + (notes.get(chord.get(i)) + 12 * multiplier));//turn off the note
-        }
+//        sleep(sleepTime);
+//        for(int i = 0; i < chord.size(); i++) {
+//            mChannels[0].noteOff(FIRST_NOTE + (notes.get(chord.get(i)) + 12 * multiplier));//turn off the note
+//        }
     }
-
 
     private String[] createMelody() {
         String[] melody = new String[melodyLength];
@@ -218,12 +232,10 @@ public class Driver {
         int crotchet = 1;
         return method(notes, crotchet);
     }
-
     public String[][] getMinims(String[] notes) {
         int minim = 2;
         return method(notes, minim);
     }
-
     public String[][] getSemiBreves(String[] notes) {
         int semibreve = 3;
         return method(notes, semibreve);
