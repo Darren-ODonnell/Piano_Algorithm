@@ -127,24 +127,6 @@ public class Driver {
                 }
             endChord(chords.get(x));
         }
-//        for(int i = 0; i < melody.length; i++) {
-//            char note = melody[i].charAt(0);
-//
-//            if(Character.isLowerCase(note)) {// lower case character inside a chord signifies that the note is in the next chord
-//                melody[i] = melody[i].toUpperCase();
-//                playNote(melody[i], time.getNoteDuration(), 3);
-//            }else {
-//                playNote(melody[i],time.getNoteDuration(), 2);
-//            }
-//       }
-//        for(int i = 0; i < chords.size(); i++){
-//            for(int x = 0 ; x < chords.get(i).size(); x++) {
-//                //chords.get(i).set(x , chords.get(i).get(x).toUpperCase());
-//
-//            }
-//            playChord(chords.get(i), time.getNoteDuration(),3);
-//
-//        }
     }
 
     private void playNote(String note, int sleepTime, int multiplier){
