@@ -15,6 +15,7 @@ public class Driver {
 
 
     private String[] scale = scales.getRandomScale();
+    ArrayList<String> available = new ArrayList<>(Arrays.asList(scale));
 
     private int timeSignature = 8;
     private int chordAmount = 4;
@@ -93,19 +94,65 @@ public class Driver {
         int chordSize = r.nextInt(chordSizeMax)+2;
         System.out.println("chordSize = "+chordSize);
         int x = 0;
-        while(chordSize > x) {
-            int note = r.nextInt(8);
 
-
-            if(!chord.contains(scale[note])){
-                chord.add(scale[note]);
-                x++;
-                //chords[i][x] = aMajor[note];
-            }
-            Collections.sort(chord);
-
+        while(x < chordSize ) {
+            chord = addToChord(chord);
+            x++;
         }
         return chord;
+    }
+    private ArrayList<String> addToChord(ArrayList<String> chord){
+        String preNote;
+        String postNote;
+        boolean noChange = true;
+        while(noChange){
+            int note = 0;
+            if(available.size() > 1) {
+                note = r.nextInt(available.size());
+            } else if(available.size() == 1){
+                note = 0;
+            }
+            String noteStr = available.get(note);
+            int noteIndex = findIndex(noteStr);
+
+            preNote = getNote(noteIndex-1);
+            postNote = getNote(noteIndex+1);
+
+            if(postNote != null){
+                available.remove(postNote);
+            }
+
+            chord.add(available.get(note));
+            available.remove(note);
+
+            if(preNote != null){
+                available.remove(preNote);
+            }
+
+
+
+            noChange = false;
+
+        }
+        Collections.sort(chord);
+        return chord;
+    }
+
+    private String getNote(int i) {
+        if(i < 0 || i > 7) {
+            return null;
+        }else{
+            return scale[i];
+        }
+    }
+
+    private int findIndex(String noteStr) {
+        for(int i = 0; i < scale.length; i++){
+            if(scale[i].equals(noteStr)){
+                return i;
+            }
+        }
+        return -1;//never used
     }
 
     private void playMusic(String[][] melody, ArrayList<ArrayList<String>> chords) throws MidiUnavailableException {
