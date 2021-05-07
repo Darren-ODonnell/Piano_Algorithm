@@ -18,7 +18,7 @@ public class Driver {
 
     private int timeSignature = 8;
     private int chordAmount = 4;
-    private int melodyLength = 1;
+    private int melodyLength = 4;
     private int chordSizeMax = 2;
 
 
@@ -49,11 +49,11 @@ public class Driver {
 
         melody = createMelody();
 
-        String[][] strings = getQuavers(melody);
+        String[][] melodies = getQuavers(melody);
 
 
-        display(melody, chords);
-        playMusic(melody, chords);
+        display(melodies, chords);
+        playMusic(melodies, chords);
 
 
 
@@ -69,7 +69,7 @@ public class Driver {
 
     private void initTiming(){
         Time.setTimeSignature(timeSignature);
-        chordAmount *= timeSignature - timeSignature/2; //4 chords per 8 note signature
+        //Chord Amount Stays at 4 because i want 1 chord per bar
         melodyLength *= timeSignature; //8 notes per signature
     }
 
@@ -108,22 +108,23 @@ public class Driver {
         return chord;
     }
 
-    private void playMusic(String[] melody, ArrayList<ArrayList<String>> chords) throws MidiUnavailableException {
+    private void playMusic(String[][] melody, ArrayList<ArrayList<String>> chords) throws MidiUnavailableException {
 
         //Middle C is 60 // 24 is start of piano at C// 107 is end of piano at B
+
         for(int x = 0; x < chords.size(); x++) {
             playChord(chords.get(x), time.getNoteDuration() * 2, 3);
 
-            for (int i = 0; i < melody.length; i++) {
-                char note = melody[i].charAt(0);
+                for (int y = 0; y < melody[x].length; y++) {
+                    char note = melody[x][y].charAt(0);
 
-                if (Character.isLowerCase(note)) {// lower case character inside a chord signifies that the note is in the next chord
-                    melody[i] = melody[i].toUpperCase();
-                    playNote(melody[i], time.getNoteDuration(), 3);
-                } else {
-                    playNote(melody[i], time.getNoteDuration(), 2);
+                    if (Character.isLowerCase(note)) {// lower case character inside a chord signifies that the note is in the next chord
+                        melody[x][y] = melody[x][y].toUpperCase();
+                        playNote(melody[x][y], time.getNoteDuration(), 3);
+                    } else {
+                        playNote(melody[x][y], time.getNoteDuration(), 2);
+                    }
                 }
-            }
             endChord(chords.get(x));
         }
 //        for(int i = 0; i < melody.length; i++) {
@@ -178,11 +179,8 @@ public class Driver {
                 mChannels[0].noteOn(FIRST_NOTE + (notes.get(chord.get(i)) + (12 * multiplier)), 20);
             }
         }
+        System.out.println();
 
-//        sleep(sleepTime);
-//        for(int i = 0; i < chord.size(); i++) {
-//            mChannels[0].noteOff(FIRST_NOTE + (notes.get(chord.get(i)) + 12 * multiplier));//turn off the note
-//        }
     }
 
     private String[] createMelody() {
@@ -194,7 +192,7 @@ public class Driver {
         return melody;
     }
 
-    public void display(String[] melody, ArrayList<ArrayList<String>> chords) {
+    public void display(String[][] melody, ArrayList<ArrayList<String>> chords) {
         String rightHand = "\n\nRight Hand: \n";
         rightHand += Arrays.toString(melody);
         String leftHand = "\n\nLeft Hand: \n";
@@ -205,8 +203,6 @@ public class Driver {
         }
         leftHand += temp;
 
-
-        System.out.println("\n\nNew Song in A Major Scale: ");
         System.out.print(leftHand);
         System.out.print(rightHand);
     }
