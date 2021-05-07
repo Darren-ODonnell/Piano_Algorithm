@@ -15,7 +15,7 @@ public class Driver {
 
 
     private String[] scale = scales.getRandomScale();
-    ArrayList<String> available = new ArrayList<>(Arrays.asList(scale));
+    ArrayList<String> available;
 
     private int timeSignature = 8;
     private int chordAmount = 4;
@@ -89,13 +89,14 @@ public class Driver {
     }
 
     private ArrayList<String> buildChord() {
+        available = new ArrayList<>(Arrays.asList(scale));
         ArrayList<String> chord = new ArrayList<>();
         // List of Notes for Individual Chord
         int chordSize = r.nextInt(chordSizeMax)+2;
         System.out.println("chordSize = "+chordSize);
         int x = 0;
 
-        while(x < chordSize ) {
+        while(x < chordSize) {
             chord = addToChord(chord);
             x++;
         }
@@ -107,32 +108,28 @@ public class Driver {
         boolean noChange = true;
         while(noChange){
             int note = 0;
-            if(available.size() > 1) {
+            if(available.size() > 0) {
                 note = r.nextInt(available.size());
-            } else if(available.size() == 1){
-                note = 0;
+                String noteStr = available.get(note);
+                int noteIndex = findIndex(noteStr);
+
+                preNote = getNote(noteIndex-1);
+                postNote = getNote(noteIndex+1);
+
+                if(postNote != null){
+                    available.remove(postNote);
+                }
+
+                chord.add(available.get(note));
+                available.remove(note);
+
+                if(preNote != null){
+                    available.remove(preNote);
+                }
             }
-            String noteStr = available.get(note);
-            int noteIndex = findIndex(noteStr);
-
-            preNote = getNote(noteIndex-1);
-            postNote = getNote(noteIndex+1);
-
-            if(postNote != null){
-                available.remove(postNote);
-            }
-
-            chord.add(available.get(note));
-            available.remove(note);
-
-            if(preNote != null){
-                available.remove(preNote);
-            }
-
 
 
             noChange = false;
-
         }
         Collections.sort(chord);
         return chord;
