@@ -127,8 +127,6 @@ public class Driver {
                     available.remove(preNote);
                 }
             }
-
-
             noChange = false;
         }
         Collections.sort(chord);
