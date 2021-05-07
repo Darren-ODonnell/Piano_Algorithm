@@ -113,16 +113,16 @@ public class Driver {
         //Middle C is 60 // 24 is start of piano at C// 107 is end of piano at B
 
         for(int x = 0; x < chords.size(); x++) {
-            playChord(chords.get(x), time.getNoteDuration() * 2, 3);
+            playChord(chords.get(x), time.getNoteDuration() * 2, 2);
 
                 for (int y = 0; y < melody[x].length; y++) {
                     char note = melody[x][y].charAt(0);
 
                     if (Character.isLowerCase(note)) {// lower case character inside a chord signifies that the note is in the next chord
                         melody[x][y] = melody[x][y].toUpperCase();
-                        playNote(melody[x][y], time.getNoteDuration(), 3);
+                        playNote(melody[x][y], time.getNoteDuration(), 4);
                     } else {
-                        playNote(melody[x][y], time.getNoteDuration(), 2);
+                        playNote(melody[x][y], time.getNoteDuration(), 3);
                     }
                 }
             endChord(chords.get(x));
@@ -174,12 +174,13 @@ public class Driver {
 
             if(Character.isLowerCase(note)) {// lower case character inside a chord signifies that the note is in the next chord
                 chord.set(i, chord.get(i).toUpperCase());
-                mChannels[0].noteOn(FIRST_NOTE + (notes.get(chord.get(i)) + (12 * (multiplier+1))), 20);
+                mChannels[0].noteOn(FIRST_NOTE + (notes.get(chord.get(i)) + (12 * (multiplier+1))), 30);
             }else {
-                mChannels[0].noteOn(FIRST_NOTE + (notes.get(chord.get(i)) + (12 * multiplier)), 20);
+                mChannels[0].noteOn(FIRST_NOTE + (notes.get(chord.get(i)) + (12 * multiplier)), 30);
             }
         }
         System.out.println();
+        sleep(time.getNoteDuration());//In to distinguish the chord from the next node played in melody
 
     }
 
