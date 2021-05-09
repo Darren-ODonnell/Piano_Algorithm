@@ -18,8 +18,8 @@ public class Driver {
     ArrayList<String> available;
 
     private int timeSignature = 8;
-    private int chordAmount = 4;
-    private int melodyLength = 4;
+    private int chordAmount = 8;
+    private int melodyLength = 8;
     private int chordSizeMax = 2;
 
 
