@@ -160,7 +160,8 @@ public class Driver {
                 for (int note = 0; note < melody[set].length; note++) {
                     char noteChr = melody[set][note].charAt(0);
 
-                    if (Character.isLowerCase(noteChr)) {// lower case character inside a chord signifies that the note is in the next chord
+                    // lower case character inside a chord signifies that the note is in the next chord
+                    if (Character.isLowerCase(noteChr)) {
                         melody[set][note] = melody[set][note].toUpperCase();
                         playNote(melody[set][note], 4);
                     } else {
@@ -169,6 +170,7 @@ public class Driver {
 
                     sleep(time.getNoteDuration());
 
+                    // This allows the melody notes to flow into the next so it sounds less disjointed
                     if(note > 2 && note < melody[set].length){
                         endNote(melody[set][note-3], 4);
                         endNote(melody[set][note-3], 3);
@@ -179,14 +181,6 @@ public class Driver {
         }
     }
 
-//    private void playNote(String note, int sleepTime, int multiplier){
-//
-//        final int FIRST_NOTE = 24;
-//        System.out.println(note);
-//        mChannels[0].noteOn(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 30);//On channel 0, play note number 60 with velocity 100
-//        sleep(sleepTime);
-//        mChannels[0].noteOff(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 30);//turn off the note
-//    }
     private void playNote(String note, int multiplier){
         final int FIRST_NOTE = 24;
         System.out.println(note);
