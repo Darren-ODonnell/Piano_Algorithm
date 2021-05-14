@@ -219,10 +219,23 @@ public class Driver {
 
     private String[] createMelody() {
         String[] melody = new String[melodyLength];
-        for(int i = 0; i < melody.length; i++){
-            int num = r.nextInt(8);
-            melody[i] = scale[num];
+        String[] temp = scales.getArpeggio(scale);
+
+        //To be continued
+        /**
+         * Add in a for loop around the rest so that an arpeggio plays every 2*timeSignature
+         */
+
+        for(int i = 0 ; i < melody.length; i++){
+            if(i % timeSignature < 4) {
+                melody[i] = temp[i % timeSignature];
+
+            }else {
+                int num = r.nextInt(8);
+                melody[i] = scale[num];
+            }
         }
+
         return melody;
     }
 
