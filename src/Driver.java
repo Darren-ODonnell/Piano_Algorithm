@@ -154,30 +154,48 @@ public class Driver {
 
         //Middle C is 60 // 24 is start of piano at C// 107 is end of piano at B
 
-        for(int x = 0; x < chords.size(); x++) {
-            playChord(chords.get(x), time.getNoteDuration() * 2, 2);
+        for(int set = 0; set < chords.size(); set++) {
+            playChord(chords.get(set), time.getNoteDuration() * 2, 2);
 
-                for (int y = 0; y < melody[x].length; y++) {
-                    char note = melody[x][y].charAt(0);
+                for (int note = 0; note < melody[set].length; note++) {
+                    char noteChr = melody[set][note].charAt(0);
 
-                    if (Character.isLowerCase(note)) {// lower case character inside a chord signifies that the note is in the next chord
-                        melody[x][y] = melody[x][y].toUpperCase();
-                        playNote(melody[x][y], time.getNoteDuration(), 4);
+                    if (Character.isLowerCase(noteChr)) {// lower case character inside a chord signifies that the note is in the next chord
+                        melody[set][note] = melody[set][note].toUpperCase();
+                        playNote(melody[set][note], 4);
                     } else {
-                        playNote(melody[x][y], time.getNoteDuration(), 3);
+                        playNote(melody[set][note], 3);
                     }
+
+                    sleep(time.getNoteDuration());
+
+                    if(note > 2 && note < melody[set].length){
+                        endNote(melody[set][note-3], 4);
+                        endNote(melody[set][note-3], 3);
+                    }
+
                 }
-            endChord(chords.get(x));
+            endChord(chords.get(set));
         }
     }
 
-    private void playNote(String note, int sleepTime, int multiplier){
-
+//    private void playNote(String note, int sleepTime, int multiplier){
+//
+//        final int FIRST_NOTE = 24;
+//        System.out.println(note);
+//        mChannels[0].noteOn(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 30);//On channel 0, play note number 60 with velocity 100
+//        sleep(sleepTime);
+//        mChannels[0].noteOff(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 30);//turn off the note
+//    }
+    private void playNote(String note, int multiplier){
         final int FIRST_NOTE = 24;
         System.out.println(note);
         mChannels[0].noteOn(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 30);//On channel 0, play note number 60 with velocity 100
-        sleep(sleepTime);
-        mChannels[0].noteOff(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 30);//turn off the note
+    }
+    private void endNote(String note, int multiplier){
+        final int FIRST_NOTE = 24;
+                mChannels[0].noteOff(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 30);//turn off the note
+
     }
 
     private void endChord(List<String> chord){
