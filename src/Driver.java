@@ -17,6 +17,7 @@ public class Driver {
     private String[] scale = scales.getRandomScale();
     ArrayList<String> available;
 
+    final int FIRST_NOTE = 24;
     private int timeSignature = 8;
     private int chordAmount = 8;
     private int melodyLength = 8;
@@ -182,25 +183,21 @@ public class Driver {
     }
 
     private void playNote(String note, int multiplier){
-        final int FIRST_NOTE = 24;
         System.out.println(note);
         mChannels[0].noteOn(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 30);//On channel 0, play note number 60 with velocity 100
     }
     private void endNote(String note, int multiplier){
-        final int FIRST_NOTE = 24;
                 mChannels[0].noteOff(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 30);//turn off the note
 
     }
 
     private void endChord(List<String> chord){
-        final int FIRST_NOTE = 24;
         for(int i = 0; i < chord.size(); i++) {
             mChannels[0].noteOff(FIRST_NOTE + (notes.get(chord.get(i))));//turn off the note
         }
 
     }
     private void playChord(List<String> chord, int sleepTime, int multiplier) throws MidiUnavailableException {
-        final int FIRST_NOTE = 24;
         System.out.print("\n" + "chord: ");
         for(int i = 0; i < chord.size(); i++) {
 
