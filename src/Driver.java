@@ -222,8 +222,8 @@ public class Driver {
     }
 
     private void randomiseMultiplier() {
-        if(multiplierLeft > 5){
-            multiplierLeft -= 4;
+        if(multiplierLeft > 4){
+            multiplierLeft -= 3;
             multiplierLeft += r.nextInt(3);
         }else if(multiplierLeft > 2) {
             multiplierLeft -= 2;
