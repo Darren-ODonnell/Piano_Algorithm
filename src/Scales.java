@@ -140,6 +140,6 @@ public class Scales {
         int num = r.nextInt(14) + 1;
         System.out.println("Random num: " + num);
         System.out.println(Arrays.toString(scales.get(num)));
-        return scales.get(7);
+        return scales.get(num);
     }
 }
