@@ -17,6 +17,8 @@ public class Driver {
     private String[] scale = scales.getRandomScale();
     ArrayList<String> available;
 
+    private int multiplierLeft = 2;
+    private int multiplierRight = multiplierLeft+1;
     final int FIRST_NOTE = 24;
     private int timeSignature = 8;
     private int chordAmount = 8;
@@ -156,7 +158,7 @@ public class Driver {
         //Middle C is 60 // 24 is start of piano at C// 107 is end of piano at B
 
         for(int set = 0; set < chords.size(); set++) {
-            playChord(chords.get(set), time.getNoteDuration() * 2, 2);
+            playChord(chords.get(set), time.getNoteDuration() * 2, multiplierLeft);
 
                 for (int note = 0; note < melody[set].length; note++) {
                     char noteChr = melody[set][note].charAt(0);
@@ -164,9 +166,9 @@ public class Driver {
                     // lower case character inside a chord signifies that the note is in the next chord
                     if (Character.isLowerCase(noteChr)) {
                         melody[set][note] = melody[set][note].toUpperCase();
-                        playNote(melody[set][note], 4);
+                        playNote(melody[set][note], multiplierRight+1);
                     } else {
-                        playNote(melody[set][note], 3);
+                        playNote(melody[set][note], multiplierRight);
                     }
 
                     sleep(time.getNoteDuration());
@@ -215,6 +217,18 @@ public class Driver {
         System.out.println();
         sleep(time.getNoteDuration());//In to distinguish the chord from the next node played in melody
 
+        randomiseMultiplier();
+
+    }
+
+    private void randomiseMultiplier() {
+        if(multiplierLeft > 2) {
+            multiplierLeft -= 2;
+            multiplierLeft += r.nextInt(2);
+        }else{
+            multiplierLeft += 2;
+        }
+        multiplierRight = multiplierLeft + 1;
     }
 
     private String[] createMelody() {
