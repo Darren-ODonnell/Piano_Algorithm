@@ -227,7 +227,7 @@ public class Driver {
          */
 
         for(int i = 0 ; i < melody.length; i++){
-            if(i % timeSignature < 4) {
+            if(i % (timeSignature*2) < 4) {
                 melody[i] = temp[i % timeSignature];
 
             }else {
