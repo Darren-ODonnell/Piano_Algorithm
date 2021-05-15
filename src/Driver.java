@@ -210,6 +210,7 @@ public class Driver {
             if(Character.isLowerCase(note)) {// lower case character inside a chord signifies that the note is in the next chord
                 chord.set(i, chord.get(i).toUpperCase());
                 mChannels[0].noteOn(FIRST_NOTE + (notes.get(chord.get(i)) + (12 * (multiplier+1))), 30);
+
             }else {
                 mChannels[0].noteOn(FIRST_NOTE + (notes.get(chord.get(i)) + (12 * multiplier)), 30);
             }
@@ -311,8 +312,8 @@ public class Driver {
             for(int i = 0; i < timeCounter; i++){
             for(int x = 0; x < Time.timeSignature/Time.noteLengths[note]; x++){
                 melody[i][x] = notes[(Time.timeSignature*i)+x];
-                System.out.println("note:" + notes[(Time.timeSignature*i)+x]);
-                System.out.println("Size of notes " + notes.length);
+//                System.out.println("note:" + notes[(Time.timeSignature*i)+x]);
+//                System.out.println("Size of notes " + notes.length);
             }
         }
 
