@@ -223,13 +223,15 @@ public class Driver {
     }
 
     private void randomiseMultiplier() {
-        if(multiplierLeft > 4){
-            multiplierLeft -= r.nextInt(4);
-        }else if(multiplierLeft > 2) {
-            multiplierLeft -= r.nextInt(2);
-        }else{
+        // In place to ensure the song has balance, returning to 2-3 on most instances allows for good random distribution
+        if(multiplierLeft == 1){
             multiplierLeft += 2;
+        }else if(multiplierLeft >= 4){
+            multiplierLeft-= 2;
         }
+        // + and - randomizers allows for more centered randomness so that it is less monotone
+        multiplierLeft = multiplierLeft + r.nextInt(multiplierLeft) - r.nextInt(multiplierLeft);
+        System.out.println("MultiplierLeft = " + multiplierLeft);
         multiplierRight = multiplierLeft + 1;
     }
 

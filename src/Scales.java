@@ -5,22 +5,20 @@ import java.util.Random;
 public class Scales {
     //# = sharp(up to right)
 
-    private final String[] cMinor = new String[]{"C","D","D#","F","G","G#","a#","c"}; // 1
-    private final String[] cMajor = new String[]{"C","D","E","F","G","a","b","c"};// 2
-    private final String[] dMinor = new String[]{"D","E","F","G","a","b","c#","d"};// 3
-    private final String[] dMajor = new String[]{"D","E","F#","G","a","b","c#","d"};// 4
-    private final String[] eMinor = new String[]{"E","F#","G","a","b","c#","d#","e"};// 5
-    private final String[] eMajor = new String[]{"E","F#","G#","a","b","c#","d#","e"};// 6
-
-    private final String[] fMinor = new String[]{"F","G","G#","a#","c","c#","d#","f"};// 7
-
-    private final String[] fMajor = new String[]{"F","G","a","a#","c","d","e","f"}; // 8
-    private final String[] gMinor = new String[]{"G","a","a#","c","d","d#","f#","g"};// 9
-    private final String[] gMajor = new String[]{"G","a","b","c","d","e","f#","g"};// 10
-    private final String[] aMinor = new String[]{"A","B","C","D","E","F","G","a"}; // 11
-    private final String[] aMajor = new String[]{"A","B","C#","D","E","F#","G#","a"}; //12
-    private final String[] bMinor = new String[]{"B","C#","D","E","F#","G","a","b"}; //13
-    private final String[] bMajor = new String[]{"B","C#","D#","E","F#","G#","a#","b"}; //14
+    private final String[] cMinor = new String[]{"C","D","D#","F","G","G#","a#","c"};       // 1
+    private final String[] cMajor = new String[]{"C","D","E","F","G","a","b","c"};          // 2
+    private final String[] dMinor = new String[]{"D","E","F","G","a","b","c#","d"};         // 3
+    private final String[] dMajor = new String[]{"D","E","F#","G","a","b","c#","d"};        // 4
+    private final String[] eMinor = new String[]{"E","F#","G","a","b","c#","d#","e"};       // 5
+    private final String[] eMajor = new String[]{"E","F#","G#","a","b","c#","d#","e"};      // 6
+    private final String[] fMinor = new String[]{"F","G","G#","a#","c","c#","d#","f"};      // 7
+    private final String[] fMajor = new String[]{"F","G","a","a#","c","d","e","f"};         // 8
+    private final String[] gMinor = new String[]{"G","a","a#","c","d","d#","f#","g"};       // 9
+    private final String[] gMajor = new String[]{"G","a","b","c","d","e","f#","g"};         // 10
+    private final String[] aMinor = new String[]{"A","B","C","D","E","F","G","a"};          // 11
+    private final String[] aMajor = new String[]{"A","B","C#","D","E","F#","G#","a"};       // 12
+    private final String[] bMinor = new String[]{"B","C#","D","E","F#","G","a","b"};        // 13
+    private final String[] bMajor = new String[]{"B","C#","D#","E","F#","G#","a#","b"};     // 14
 
     private final HashMap<Integer, String[]> scales = new HashMap<>();
 
