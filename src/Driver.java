@@ -158,28 +158,29 @@ public class Driver {
         //Middle C is 60 // 24 is start of piano at C// 107 is end of piano at B
 
         for(int set = 0; set < chords.size(); set++) {
+            randomiseMultiplier();
             playChord(chords.get(set), time.getNoteDuration() * 2, multiplierLeft);
 
-                for (int note = 0; note < melody[set].length; note++) {
-                    char noteChr = melody[set][note].charAt(0);
+            for (int note = 0; note < melody[set].length; note++) {
+                char noteChr = melody[set][note].charAt(0);
 
-                    // lower case character inside a chord signifies that the note is in the next chord
-                    if (Character.isLowerCase(noteChr)) {
-                        melody[set][note] = melody[set][note].toUpperCase();
-                        playNote(melody[set][note], multiplierRight+1);
-                    } else {
-                        playNote(melody[set][note], multiplierRight);
-                    }
-
-                    sleep(time.getNoteDuration());
-
-                    // This allows the melody notes to flow into the next so it sounds less disjointed
-                    if(note > 2 && note < melody[set].length){
-                        endNote(melody[set][note-3], 4);
-                        endNote(melody[set][note-3], 3);
-                    }
-
+                // lower case character inside a chord signifies that the note is in the next chord
+                if (Character.isLowerCase(noteChr)) {
+                    melody[set][note] = melody[set][note].toUpperCase();
+                    playNote(melody[set][note], multiplierRight+1);
+                } else {
+                    playNote(melody[set][note], multiplierRight);
                 }
+
+                sleep(time.getNoteDuration());
+
+                // This allows the melody notes to flow into the next so it sounds less disjointed
+                if(note > 2 && note < melody[set].length){
+                    endNote(melody[set][note-3], 4);
+                    endNote(melody[set][note-3], 3);
+                }
+
+            }
             endChord(chords.get(set));
         }
     }
@@ -218,21 +219,25 @@ public class Driver {
         System.out.println();
         sleep(time.getNoteDuration());//In to distinguish the chord from the next node played in melody
 
-        randomiseMultiplier();
-
     }
 
     private void randomiseMultiplier() {
-        // In place to ensure the song has balance, returning to 2-3 on most instances allows for good random distribution
-        if(multiplierLeft == 1){
-            multiplierLeft += 2;
-        }else if(multiplierLeft >= 4){
-            multiplierLeft-= 2;
+        // In place to ensure the song has balance, returning to 2-3 on each iteration allows for a well-sounding random distribution
+        if(multiplierLeft > 3) {
+            multiplierLeft = 3;
+        }else{
+            multiplierLeft = 2;
         }
-        // + and - randomizers allows for more centered randomness so that it is less monotone
+
+        // + and - randomizers allows for more centered randomness
         multiplierLeft = multiplierLeft + r.nextInt(multiplierLeft) - r.nextInt(multiplierLeft);
-        System.out.println("MultiplierLeft = " + multiplierLeft);
-        multiplierRight = multiplierLeft + 1;
+        if(multiplierLeft >=5){// The 5th octave and up is too high pitched, this reduces how often it is played
+            multiplierLeft -= 1;
+        }
+        multiplierRight = multiplierLeft + r.nextInt(2) + 1;
+        System.out.println("MultiplierLeft(Chord) = " + multiplierLeft);
+        System.out.println("MultiplierRight(Melody) = " + multiplierRight);
+
     }
 
     private String[] createMelody() {
