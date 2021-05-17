@@ -4,17 +4,17 @@
     own, the purpose of this program is to give people an idea which they can use to make
     into a song
 
-**Introduction**
+**Overview**
 
-This Program uses MidiSynth to produce piano notes.
+    This Program uses MidiSynth to produce piano notes.
 
-This is an algorithm to pick a random scale and from this it chooses random notes 
+    This is an algorithm to pick a random scale and from this it chooses random notes 
     to be played either in the melody portion or in the chord portion.
 
-For the playNote and playChord methods, the first C note on the Midi Piano is at index 24 and from there on 
+    For the playNote and playChord methods, the first C note on the Midi Piano is at index 24 and from there on 
     I have set a multiplier so that it picks a note and from the multiplier assigns the key used.
 
-You can run the program from the Driver class.
+    You can run the program from the Driver class.
 
 
 **From My Knowledge of Music thus far, for a song to sound appealing it must follow these rules:**
