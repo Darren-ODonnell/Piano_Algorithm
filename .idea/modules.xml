@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PianoAlgoithms.iml" filepath="$PROJECT_DIR$/PianoAlgoithms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PianoAlgorithm.iml" filepath="$PROJECT_DIR$/PianoAlgorithm.iml" />
     </modules>
   </component>
 </project>

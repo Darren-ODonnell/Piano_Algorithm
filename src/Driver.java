@@ -46,10 +46,8 @@ public class Driver {
 
             chords.add(chord);
 
-            System.out.println(chord);
         }
 
-        System.out.println("Chords# = "+chords.size());
 
         melody = createMelody();
 
@@ -96,7 +94,6 @@ public class Driver {
         ArrayList<String> chord = new ArrayList<>();
         // List of Notes for Individual Chord
         int chordSize = r.nextInt(chordSizeMax)+2;
-        System.out.println("chordSize = "+chordSize);
         int x = 0;
 
         while(x < chordSize) {
@@ -323,7 +320,7 @@ public class Driver {
             }
         }
 
-            System.out.println(Arrays.deepToString(melody));
+            System.out.println("Melody : " + Arrays.deepToString(melody));
             return melody;
     }
 

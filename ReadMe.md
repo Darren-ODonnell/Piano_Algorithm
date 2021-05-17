@@ -32,3 +32,12 @@
     The deep and high octaves are outliers and should not be used extensively
     I use uppercase for notes within the current octave and lowercase for notes in the octave higher
         e.g. C-Scale = C, D, E, F, G, a, b, c 
+
+**Running PianoAlgorithms Through Command Prompt**
+
+    To Open Command Prompt, Press the start button and search for cmd
+    navigate to where the project is located using **cd <folder_name>** , 
+    **dir** is used to check what folders are inside current directory.
+    Navigate to PianoAlgorithm\out\production\PianoAlgorithm
+    then run command **java Driver** to run the program.
+    

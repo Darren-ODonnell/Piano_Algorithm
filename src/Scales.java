@@ -137,7 +137,7 @@ public class Scales {
         Random r = new Random();
         int num = r.nextInt(14) + 1;
         System.out.println("Random num: " + num);
-        System.out.println(Arrays.toString(scales.get(num)));
+        System.out.println("Scale " + num + " :" + Arrays.toString(scales.get(num)));
         return scales.get(num);
     }
 }
