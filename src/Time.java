@@ -7,6 +7,7 @@ public class Time {
     final static int MINIM = 4;
     final static int SEMIBREVE = 8;
     static int[] noteLengths = new int[]{QUAVER, CROTCHET, MINIM, SEMIBREVE};
+    static int[] noteDurations = new int[]{250, 500, 1000, 2000};
     int noteDuration;
     int secondaryNoteDuration;
 
@@ -24,8 +25,8 @@ public class Time {
 
     public void setSecondaryNoteDuration(){
         Random r = new Random();
-        int num = r.nextInt(4)+1; // 1-4
-        secondaryNoteDuration = noteLengths[num];
+        int num = r.nextInt(4); // 1-4
+        secondaryNoteDuration = noteDurations[num];
     }
 
     public int getSecondaryNoteDuration(){
@@ -36,18 +37,36 @@ public class Time {
 
         switch (duration){
             case QUAVER:
-                this.noteDuration = 250; //Quarter Second
+                this.noteDuration = noteDurations[0]; //Quarter Second
                 break;
             case CROTCHET:
-                this.noteDuration = 500; // Half Second
+                this.noteDuration = noteDurations[1]; // Half Second
                 break;
             case MINIM:
-                this.noteDuration = 1000; // 1 Second
+                this.noteDuration = noteDurations[2]; // 1 Second
                 break;
             case SEMIBREVE:
-                this.noteDuration = 2000; // 2 Second
+                this.noteDuration = noteDurations[3]; // 2 Second
                 break;
         }
 
+    }
+    public int getNoteDuration(int index){
+
+        switch (index){
+            case 0:
+                //Quarter Second
+                return noteDurations[0];
+            case 1:
+                // Half Second
+                return noteDurations[1];
+            case 2:
+                // 1 second
+                return noteDurations[2];
+            case 3:
+                // 2 Second
+                return noteDurations[3];
+        }
+        return noteDurations[0];
     }
 }

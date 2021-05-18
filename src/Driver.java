@@ -147,12 +147,30 @@ public class Driver {
     private void playMusic(String[][] melody, ArrayList<ArrayList<String>> chords) throws MidiUnavailableException {
 
         //Middle C is 60 // 24 is start of piano at C// 107 is end of piano at B
+        int timeCount = 0;
+        time.setSecondaryNoteDuration();
 
         for(int set = 0; set < chords.size(); set++) {
             randomiseMultiplier();
             playChord(chords.get(set), time.getNoteDuration() * 2, multiplierLeft);
 
             for (int note = 0; note < melody[set].length; note++) {
+
+                if(timeCount == time.getSecondaryNoteDuration()){
+                    int num = r.nextInt(8);
+                    System.out.print("Extra note: ");
+                    
+                    // The multiplier is -1 compared to regular melody to avoid clashing of notes
+                    if (Character.isLowerCase(scale[num].charAt(0))) {
+                        String noteChr = scale[num].toUpperCase();
+                        playNote(noteChr, multiplierRight-1);
+                    }else{
+                        playNote(scale[num], multiplierRight);
+                    }
+                    time.setSecondaryNoteDuration();
+                    timeCount = 0;
+                }
+
                 char noteChr = melody[set][note].charAt(0);
 
                 // lower case character inside a chord signifies that the note is in the next chord
@@ -167,9 +185,10 @@ public class Driver {
 
                 // This allows the melody notes to flow into the next so it sounds less disjointed
                 if(note > 2 && note < melody[set].length){
-                    endNote(melody[set][note-3], 4);
-                    endNote(melody[set][note-3], 3);
+                    endNote(melody[set][note-2], 4);
+                    endNote(melody[set][note-2], 3);
                 }
+                timeCount+=250;
 
             }
             endChord(chords.get(set));
