@@ -11,7 +11,6 @@ public class Driver {
 
     Time time;
     Scales scales = new Scales();
-    UsingScales usingScales = new UsingScales();
 
 
     private String[] scale = scales.getRandomScale();
