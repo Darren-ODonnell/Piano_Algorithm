@@ -148,6 +148,7 @@ public class Driver {
 
         //Middle C is 60 // 24 is start of piano at C// 107 is end of piano at B
         int timeCount = 0;
+        String secondaryNoteChr = "";
         time.setSecondaryNoteDuration();
 
         for(int set = 0; set < chords.size(); set++) {
@@ -159,13 +160,14 @@ public class Driver {
                 if(timeCount == time.getSecondaryNoteDuration()){
                     int num = r.nextInt(8);
                     System.out.print("Extra note: ");
-                    
+
                     // The multiplier is -1 compared to regular melody to avoid clashing of notes
                     if (Character.isLowerCase(scale[num].charAt(0))) {
-                        String noteChr = scale[num].toUpperCase();
-                        playNote(noteChr, multiplierRight-1);
+                        secondaryNoteChr = scale[num].toUpperCase();
+                        playNote(secondaryNoteChr, multiplierRight-1);
                     }else{
-                        playNote(scale[num], multiplierRight);
+                        secondaryNoteChr = scale[num];
+                        playNote(secondaryNoteChr, multiplierRight);
                     }
                     time.setSecondaryNoteDuration();
                     timeCount = 0;
@@ -185,11 +187,16 @@ public class Driver {
 
                 // This allows the melody notes to flow into the next so it sounds less disjointed
                 if(note > 2 && note < melody[set].length){
-                    endNote(melody[set][note-2], 4);
-                    endNote(melody[set][note-2], 3);
+                    endNote(melody[set][note-2], multiplierRight);
+                    endNote(melody[set][note-2], multiplierRight+1);
                 }
                 timeCount+=250;
 
+            }
+            // The player becomes clogged with secondaryNotes and doesn't sound appealing without this
+            if(!secondaryNoteChr.isEmpty()) {
+                endNote(secondaryNoteChr, multiplierRight);
+                endNote(secondaryNoteChr, multiplierRight+1);
             }
             endChord(chords.get(set));
         }
