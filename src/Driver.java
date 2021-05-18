@@ -47,16 +47,12 @@ public class Driver {
             chords.add(chord);
 
         }
-
-
         melody = createMelody();
 
         String[][] melodies = getQuavers(melody);
 
-
         display(melodies, chords);
         playMusic(melodies, chords);
-
 
 
         //All below is synth work
@@ -65,8 +61,6 @@ public class Driver {
         MidiChannel[] mChannels = synthesizer.getChannels();
 
         synthesizer.loadInstrument(instruments[0]);
-
-
     }
 
     private void initTiming(){

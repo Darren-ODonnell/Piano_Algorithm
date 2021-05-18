@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class Time {
     static int timeSignature = 0;
     final static int QUAVER = 1;
@@ -6,6 +8,7 @@ public class Time {
     final static int SEMIBREVE = 8;
     static int[] noteLengths = new int[]{QUAVER, CROTCHET, MINIM, SEMIBREVE};
     int noteDuration;
+    int secondaryNoteDuration;
 
     public static void setTimeSignature(int time) {
         timeSignature = time;
@@ -15,8 +18,18 @@ public class Time {
         return timeSignature;
     }
 
-    public  int getNoteDuration(){
+    public int getNoteDuration(){
         return noteDuration;
+    }
+
+    public void setSecondaryNoteDuration(){
+        Random r = new Random();
+        int num = r.nextInt(4)+1; // 1-4
+        secondaryNoteDuration = noteLengths[num];
+    }
+
+    public int getSecondaryNoteDuration(){
+        return this.secondaryNoteDuration;
     }
 
     public void setNoteDuration(int duration){
