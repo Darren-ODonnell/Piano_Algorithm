@@ -39,6 +39,10 @@ public class Scales {
         scales.put(14, bMajor);
     }
 
+    public String[] getScale(int i){// 1-14
+        return scales.get(i);
+    }
+
     public String[] getcMinor() {
         return cMinor;
     }

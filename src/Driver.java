@@ -30,13 +30,19 @@ public class Driver {
 
 
     public Driver() throws MidiUnavailableException {
+
+        initSynth();
         init();
         initTiming();
 
-
-        //Pick scale to make a random song
         time = new Time();
         r = new Random();
+
+        playRandomSong();
+
+    }
+    private void playRandomSong() throws MidiUnavailableException {
+        //Pick scale to make a random song
         String[] melody = new String[20];
         ArrayList<ArrayList<String>> chords = new ArrayList<>();
         ArrayList<String> chord = new ArrayList<>();
@@ -57,8 +63,16 @@ public class Driver {
         display(melodies, chords);
         playMusic(melodies, chords);
 
+        displayExtras();
+    }
 
-        //All below is synth work
+    private void displayExtras() {
+        System.out.println("Left Multipliers: " + leftMultipliers.toString());
+        System.out.println("Right Multipliers: " + rightMultipliers.toString());
+        System.out.println("Extra Notes: " + extraNotes.toString());
+    }
+
+    private void initSynth() throws MidiUnavailableException {
         Synthesizer synthesizer = MidiSystem.getSynthesizer();
         Instrument[] instruments = synthesizer.getDefaultSoundbank().getInstruments();
         MidiChannel[] mChannels = synthesizer.getChannels();
@@ -147,66 +161,6 @@ public class Driver {
         return -1;//never used
     }
 
-    private void playMusic(String[][] melody, ArrayList<ArrayList<String>> chords) throws MidiUnavailableException {
-
-        //Middle C is 60 // 24 is start of piano at C// 107 is end of piano at B
-        int timeCount = 0;
-        String secondaryNoteChr = "";
-        time.setSecondaryNoteDuration();
-
-        for(int set = 0; set < chords.size(); set++) {
-            randomiseMultiplier();
-            playChord(chords.get(set), time.getNoteDuration() * 2, multiplierLeft);
-
-            for (int note = 0; note < melody[set].length; note++) {
-
-                if(timeCount == time.getSecondaryNoteDuration()){
-                    int num = r.nextInt(8);
-                    System.out.print("Extra note: ");
-
-                    // The multiplier is -1 compared to regular melody to avoid clashing of notes
-                    if (Character.isLowerCase(scale[num].charAt(0))) {
-                        secondaryNoteChr = scale[num].toUpperCase();
-                        playNote(secondaryNoteChr, multiplierRight-1);
-                    }else{
-                        secondaryNoteChr = scale[num];
-                        playNote(secondaryNoteChr, multiplierRight);
-                    }
-                    extraNotes.add(secondaryNoteChr);
-                    time.setSecondaryNoteDuration();
-                    timeCount = 0;
-                }else{
-                    extraNotes.add("");
-                }
-
-                char noteChr = melody[set][note].charAt(0);
-
-                // lower case character inside a chord signifies that the note is in the next chord
-                if (Character.isLowerCase(noteChr)) {
-                    melody[set][note] = melody[set][note].toUpperCase();
-                    playNote(melody[set][note], multiplierRight+1);
-                } else {
-                    playNote(melody[set][note], multiplierRight);
-                }
-
-                sleep(time.getNoteDuration());
-
-                // This allows the melody notes to flow into the next so it sounds less disjointed
-                if(note > 2 && note < melody[set].length){
-                    endNote(melody[set][note-2], multiplierRight);
-                    endNote(melody[set][note-2], multiplierRight+1);
-                }
-                timeCount+=250;
-
-            }
-            // The player becomes clogged with secondaryNotes and doesn't sound appealing without this
-            if(!secondaryNoteChr.isEmpty()) {
-                endNote(secondaryNoteChr, multiplierRight);
-                endNote(secondaryNoteChr, multiplierRight+1);
-            }
-            endChord(chords.get(set));
-        }
-    }
 
     private void playNote(String note, int multiplier){
         System.out.println(note);
@@ -223,7 +177,7 @@ public class Driver {
         }
 
     }
-    private void playChord(List<String> chord, int sleepTime, int multiplier) throws MidiUnavailableException {
+    private void playChord(List<String> chord, int multiplier) throws MidiUnavailableException {
         System.out.print("\n" + "chord: ");
         for(int i = 0; i < chord.size(); i++) {
 
@@ -347,8 +301,98 @@ public class Driver {
             return melody;
     }
 
-    private void playMusic(List<List<String>> chords, String[][] melody, List<Integer> multipliersLeft, List<Integer> multipliersRight, List<String> extraNotes){
-        
+    private void playMusic(String[][] melody, ArrayList<ArrayList<String>> chords) throws MidiUnavailableException {
+
+        //Middle C is 60 // 24 is start of piano at C// 107 is end of piano at B
+        int timeCount = 0;
+        String secondaryNoteChr = "";
+        time.setSecondaryNoteDuration();
+
+        for(int set = 0; set < chords.size(); set++) {
+            randomiseMultiplier();
+            playChord(chords.get(set), multiplierLeft);
+
+            for (int note = 0; note < melody[set].length; note++) {
+
+                if(timeCount == time.getSecondaryNoteDuration()){
+                    int num = r.nextInt(8);
+                    System.out.print("Extra note: ");
+
+                    // The multiplier is -1 compared to regular melody to avoid clashing of notes
+                    if (Character.isLowerCase(scale[num].charAt(0))) {
+                        secondaryNoteChr = scale[num].toUpperCase();
+                        playNote(secondaryNoteChr, multiplierRight);
+                    }else{
+                        secondaryNoteChr = scale[num];
+                        playNote(secondaryNoteChr, multiplierRight-1);
+                    }
+                    extraNotes.add(secondaryNoteChr);
+                    time.setSecondaryNoteDuration();
+                    timeCount = 0;
+                }else{
+                    extraNotes.add("");
+                }
+
+                char noteChr = melody[set][note].charAt(0);
+
+                // lower case character inside a chord signifies that the note is in the next chord
+                if (Character.isLowerCase(noteChr)) {
+                    melody[set][note] = melody[set][note].toUpperCase();
+                    playNote(melody[set][note], multiplierRight+1);
+                } else {
+                    playNote(melody[set][note], multiplierRight);
+                }
+
+                sleep(time.getNoteDuration());
+
+                // This allows the melody notes to flow into the next so it sounds less disjointed
+                if(note > 2 && note < melody[set].length){
+                    endNote(melody[set][note-2], multiplierRight);
+                    endNote(melody[set][note-2], multiplierRight+1);
+                }
+                timeCount+=250;
+
+            }
+            // The player becomes clogged with secondaryNotes and doesn't sound appealing without this
+            if(!secondaryNoteChr.isEmpty()) {
+                endNote(secondaryNoteChr, multiplierRight);
+                endNote(secondaryNoteChr, multiplierRight+1);
+            }
+            endChord(chords.get(set));
+        }
+    }
+
+    private void playMusic(List<List<String>> chords, String[][] melodies, List<Integer> multipliersLeft,
+                           List<Integer> multipliersRight, List<String> extraNotes,
+                            int scaleSelected, int speed) throws MidiUnavailableException {
+        scale = scales.getScale(scaleSelected);
+        int timeCount = 0;
+        for(int chordNum = 0; chordNum < chords.size(); chordNum++){
+            playChord(chords.get(chordNum), multipliersLeft.get(chordNum));
+
+            for(int melody = 0; melody < melodies.length; melody ++){
+                for(int note = 0; note < melodies[melody].length; note++){
+
+                    //Play extra note
+                    if(!extraNotes.get(timeCount).equals("")){// "" marks the pauses between extra notes
+                        String secondaryNoteChr;
+                        if(Character.isLowerCase(extraNotes.get(timeCount).charAt(0))){
+                            secondaryNoteChr = extraNotes.get(timeCount).toUpperCase();
+                            playNote(secondaryNoteChr, multiplierRight);
+                        }else{
+                            secondaryNoteChr = extraNotes.get(timeCount);
+                            playNote(secondaryNoteChr, multiplierRight-1);
+                        }
+                    }
+
+
+                    playNote(melodies[melody][note],multipliersRight.get(chordNum));
+                    timeCount ++;
+                }
+
+            }
+            endChord(chords.get(chordNum));
+        }
     }
 
 }
