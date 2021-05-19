@@ -24,6 +24,9 @@ public class Driver {
     private int melodyLength = 8;
     private int chordSizeMax = 2;
 
+    private List<Integer>leftMultipliers = new ArrayList<>();
+    private List<Integer>RightMultipliers = new ArrayList<>();
+
 
     public Driver() throws MidiUnavailableException {
         init();
@@ -251,6 +254,8 @@ public class Driver {
             multiplierLeft -= 1;
         }
         multiplierRight = multiplierLeft + r.nextInt(2) + 1;
+        leftMultipliers.add(multiplierLeft);
+        RightMultipliers.add(multiplierRight);
         System.out.println("MultiplierLeft(Chord) = " + multiplierLeft);
         System.out.println("MultiplierRight(Melody) = " + multiplierRight);
 
