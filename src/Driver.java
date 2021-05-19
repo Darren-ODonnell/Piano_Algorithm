@@ -39,6 +39,7 @@ public class Driver {
     FileHandling fh = new FileHandling();
     CompleteMelody completeMelody = new CompleteMelody();
 
+    boolean playRandom = false;
 
     public Driver() throws MidiUnavailableException {
 
@@ -49,40 +50,45 @@ public class Driver {
         time = new Time();
         r = new Random();
 
-        Gson gson = new Gson();
-//        playRandomSong();
-        //                                  CompleteMelody(ArrayList<ArrayList<String>> chords, String[][] melody, List<Integer> leftMultipliers, List<Integer> rightMultipliers, List<String> extraNotes, int scaleNum) {
-        //completeMelody = new CompleteMelody(chords,                              melodies,          leftMultipliers,               rightMultipliers,                extraNotes,             scaleNum);
-//        System.out.println(melodies[1][1]);
-//        completeMelody.setMelody(melodies);
-//        completeMelody.setChords(chords);
-//        completeMelody.setLeftMultipliers(leftMultipliers);
-//        completeMelody.setRightMultipliers(rightMultipliers);
-//        completeMelody.setExtraNotes(extraNotes);
-//        completeMelody.setScaleNum(scaleNum);
-//        System.out.println(completeMelody.chords.get(1).get(1));
+        if(playRandom) {
+            playRandomSong();
+            saveMelodyToFile();
+        }else {
+            playFromMemory();
+        }
 
-////        String json = gson.toJson(completeMelody);
-//
-//        try (FileWriter writer = new FileWriter("melody.json")) {
-//            gson.toJson(completeMelody, writer);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-        try  {
-            completeMelody  = gson.fromJson(new FileReader("melody.json"), CompleteMelody.class);
+    }
+
+    private void playFromMemory() throws MidiUnavailableException {
+        Gson gson = new Gson();
+        try {
+            completeMelody = gson.fromJson(new FileReader("melody.json"), CompleteMelody.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
-//        fh.writeToFile("melody.json", json);
         playMusic(completeMelody.getChords(), completeMelody.getMelody(), completeMelody.getLeftMultipliers(), completeMelody.getRightMultipliers(), completeMelody.getExtraNotes(), completeMelody.getScaleNum());
 
+    }
 
+    private void saveMelodyToFile() {
+        Gson gson = new Gson();
+        completeMelody.setMelody(melodies);
+        completeMelody.setChords(chords);
+        completeMelody.setLeftMultipliers(leftMultipliers);
+        completeMelody.setRightMultipliers(rightMultipliers);
+        completeMelody.setExtraNotes(extraNotes);
+        completeMelody.setScaleNum(scaleNum);
+
+
+        try (FileWriter writer = new FileWriter("melody.json")) {
+            gson.toJson(completeMelody, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
+
     private void playRandomSong() throws MidiUnavailableException {
         //Pick scale to make a random song
         String[] melody = new String[20];
@@ -407,6 +413,8 @@ public class Driver {
     private void playMusic(ArrayList<ArrayList<String>> chords, String[][] melodies, List<Integer> multipliersLeft,
                            List<Integer> multipliersRight, List<String> extraNotes,
                             int scaleSelected) throws MidiUnavailableException {
+
+        String secondaryNoteChr = "";
         scale = scales.getScale(scaleSelected);
         time.setNoteDuration(Time.QUAVER);
         int timeCount = 0;
@@ -418,7 +426,6 @@ public class Driver {
                     //Play extra note
 
                     if(!extraNotes.get(timeCount).equals("")){// "" marks the pauses between extra notes
-                        String secondaryNoteChr;
                         System.out.print("Extra note: ");
 
                         if(Character.isLowerCase(extraNotes.get(timeCount).charAt(0))){
@@ -431,11 +438,18 @@ public class Driver {
                     }
                     sleep(time.getNoteDuration());
 
-
-
                     playNote(melodies[chordNum][note],multipliersRight.get(chordNum));
+
+                    if(note > 2 && note < melodies[chordNum].length){
+                        endNote(melodies[chordNum][note-2], multiplierRight);
+                        endNote(melodies[chordNum][note-2], multiplierRight+1);
+                    }
                     timeCount ++;
                 }
+            if(!secondaryNoteChr.isEmpty()) {
+                endNote(secondaryNoteChr, multiplierRight);
+                endNote(secondaryNoteChr, multiplierRight+1);
+            }
             endChord(chords.get(chordNum));
         }
     }
