@@ -2,7 +2,7 @@
 
     This program in itself will likely never produce a full melody which is perfect on its
     own, the purpose of this program is to give people an idea which they can use to make
-    into a song
+    into a song.
 
 **Overview**
 
@@ -40,4 +40,10 @@
     **dir** is used to check what folders are inside current directory.
     Navigate to PianoAlgorithm\out\production\PianoAlgorithm
     then run command **java Driver** to run the program.
+
+**Code-Related Notes**
+
+    The playRandom boolean variable in the Driver class 
+        -> Set to true to produce a random melody
+        -> Set to false if you would like the view the last melody again (melody.json)
     
