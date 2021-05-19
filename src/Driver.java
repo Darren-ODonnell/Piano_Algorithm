@@ -280,14 +280,9 @@ public class Driver {
 
     public void display(String[][] melody, ArrayList<ArrayList<String>> chords) {
         String rightHand = "\n\nRight Hand: \n";
-        rightHand += Arrays.toString(melody);
+        rightHand += Arrays.deepToString(melody);
         String leftHand = "\n\nLeft Hand: \n";
-        String temp = "";
-        int i = 1;
-        for (List<String> ch : chords) {
-            temp += "Chord" + i++ + ": " + ch.toString() + "\n";
-        }
-        leftHand += temp;
+        leftHand += chords.toString();
 
         System.out.print(leftHand);
         System.out.print(rightHand);
@@ -342,8 +337,6 @@ public class Driver {
             System.out.println("Melody : " + Arrays.deepToString(melody));
             return melody;
     }
-
-
 
 
 }
