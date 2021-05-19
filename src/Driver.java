@@ -25,7 +25,8 @@ public class Driver {
     private int chordSizeMax = 2;
 
     private List<Integer>leftMultipliers = new ArrayList<>();
-    private List<Integer>RightMultipliers = new ArrayList<>();
+    private List<Integer> rightMultipliers = new ArrayList<>();
+    private List<String>extraNotes = new ArrayList<>();
 
 
     public Driver() throws MidiUnavailableException {
@@ -171,8 +172,11 @@ public class Driver {
                         secondaryNoteChr = scale[num];
                         playNote(secondaryNoteChr, multiplierRight);
                     }
+                    extraNotes.add(secondaryNoteChr);
                     time.setSecondaryNoteDuration();
                     timeCount = 0;
+                }else{
+                    extraNotes.add("");
                 }
 
                 char noteChr = melody[set][note].charAt(0);
@@ -255,7 +259,7 @@ public class Driver {
         }
         multiplierRight = multiplierLeft + r.nextInt(2) + 1;
         leftMultipliers.add(multiplierLeft);
-        RightMultipliers.add(multiplierRight);
+        rightMultipliers.add(multiplierRight);
         System.out.println("MultiplierLeft(Chord) = " + multiplierLeft);
         System.out.println("MultiplierRight(Melody) = " + multiplierRight);
 
@@ -343,5 +347,8 @@ public class Driver {
             return melody;
     }
 
+    private void playMusic(List<List<String>> chords, String[][] melody, List<Integer> multipliersLeft, List<Integer> multipliersRight, List<String> extraNotes){
+        
+    }
 
 }
