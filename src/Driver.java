@@ -1,4 +1,9 @@
+import com.google.gson.Gson;
+
 import javax.sound.midi.*;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class Driver {
@@ -14,6 +19,7 @@ public class Driver {
 
 
     private String[] scale = scales.getRandomScale();
+    private int scaleNum = scales.scaleInUse;
     ArrayList<String> available;
 
     private int multiplierLeft = 2;
@@ -24,9 +30,14 @@ public class Driver {
     private int melodyLength = 8;
     private int chordSizeMax = 2;
 
+    ArrayList<ArrayList<String>> chords = new ArrayList<>();
+    String[][] melodies;
     private List<Integer>leftMultipliers = new ArrayList<>();
     private List<Integer> rightMultipliers = new ArrayList<>();
     private List<String>extraNotes = new ArrayList<>();
+
+    FileHandling fh = new FileHandling();
+    CompleteMelody completeMelody = new CompleteMelody();
 
 
     public Driver() throws MidiUnavailableException {
@@ -38,13 +49,44 @@ public class Driver {
         time = new Time();
         r = new Random();
 
-        playRandomSong();
+        Gson gson = new Gson();
+//        playRandomSong();
+        //                                  CompleteMelody(ArrayList<ArrayList<String>> chords, String[][] melody, List<Integer> leftMultipliers, List<Integer> rightMultipliers, List<String> extraNotes, int scaleNum) {
+        //completeMelody = new CompleteMelody(chords,                              melodies,          leftMultipliers,               rightMultipliers,                extraNotes,             scaleNum);
+//        System.out.println(melodies[1][1]);
+//        completeMelody.setMelody(melodies);
+//        completeMelody.setChords(chords);
+//        completeMelody.setLeftMultipliers(leftMultipliers);
+//        completeMelody.setRightMultipliers(rightMultipliers);
+//        completeMelody.setExtraNotes(extraNotes);
+//        completeMelody.setScaleNum(scaleNum);
+//        System.out.println(completeMelody.chords.get(1).get(1));
+
+////        String json = gson.toJson(completeMelody);
+//
+//        try (FileWriter writer = new FileWriter("melody.json")) {
+//            gson.toJson(completeMelody, writer);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+        try  {
+            completeMelody  = gson.fromJson(new FileReader("melody.json"), CompleteMelody.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+//        fh.writeToFile("melody.json", json);
+        playMusic(completeMelody.getChords(), completeMelody.getMelody(), completeMelody.getLeftMultipliers(), completeMelody.getRightMultipliers(), completeMelody.getExtraNotes(), completeMelody.getScaleNum());
+
+
 
     }
     private void playRandomSong() throws MidiUnavailableException {
         //Pick scale to make a random song
         String[] melody = new String[20];
-        ArrayList<ArrayList<String>> chords = new ArrayList<>();
+
         ArrayList<String> chord = new ArrayList<>();
 
 
@@ -58,7 +100,7 @@ public class Driver {
         }
         melody = createMelody();
 
-        String[][] melodies = getQuavers(melody);
+        melodies = getQuavers(melody);
 
         display(melodies, chords);
         playMusic(melodies, chords);
@@ -362,20 +404,23 @@ public class Driver {
         }
     }
 
-    private void playMusic(List<List<String>> chords, String[][] melodies, List<Integer> multipliersLeft,
+    private void playMusic(ArrayList<ArrayList<String>> chords, String[][] melodies, List<Integer> multipliersLeft,
                            List<Integer> multipliersRight, List<String> extraNotes,
-                            int scaleSelected, int speed) throws MidiUnavailableException {
+                            int scaleSelected) throws MidiUnavailableException {
         scale = scales.getScale(scaleSelected);
+        time.setNoteDuration(Time.QUAVER);
         int timeCount = 0;
         for(int chordNum = 0; chordNum < chords.size(); chordNum++){
             playChord(chords.get(chordNum), multipliersLeft.get(chordNum));
 
-            for(int melody = 0; melody < melodies.length; melody ++){
-                for(int note = 0; note < melodies[melody].length; note++){
+                for(int note = 0; note < melodies[chordNum].length; note++){
 
                     //Play extra note
+
                     if(!extraNotes.get(timeCount).equals("")){// "" marks the pauses between extra notes
                         String secondaryNoteChr;
+                        System.out.print("Extra note: ");
+
                         if(Character.isLowerCase(extraNotes.get(timeCount).charAt(0))){
                             secondaryNoteChr = extraNotes.get(timeCount).toUpperCase();
                             playNote(secondaryNoteChr, multiplierRight);
@@ -384,13 +429,13 @@ public class Driver {
                             playNote(secondaryNoteChr, multiplierRight-1);
                         }
                     }
+                    sleep(time.getNoteDuration());
 
 
-                    playNote(melodies[melody][note],multipliersRight.get(chordNum));
+
+                    playNote(melodies[chordNum][note],multipliersRight.get(chordNum));
                     timeCount ++;
                 }
-
-            }
             endChord(chords.get(chordNum));
         }
     }

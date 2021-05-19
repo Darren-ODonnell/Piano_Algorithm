@@ -4,6 +4,7 @@ import java.util.Random;
 
 public class Scales {
     //# = sharp(up to right)
+    int scaleInUse = 0;
 
     private final String[] cMinor = new String[]{"C","D","D#","F","G","G#","a#","c"};       // 1
     private final String[] cMajor = new String[]{"C","D","E","F","G","a","b","c"};          // 2
@@ -140,6 +141,7 @@ public class Scales {
     public String[] getRandomScale(){
         Random r = new Random();
         int num = r.nextInt(14) + 1;
+        scaleInUse = num;
         System.out.println("Random num: " + num);
         System.out.println("Scale " + num + " :" + Arrays.toString(scales.get(num)));
         return scales.get(num);

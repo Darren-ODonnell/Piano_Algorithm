@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="top.jfunc.json:Json-Gson:1.0" type="repository">
+    <properties maven-id="top.jfunc.json:Json-Gson:1.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/top/jfunc/json/Json-Gson/1.0/Json-Gson-1.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
