@@ -15,6 +15,39 @@ public class ChordBuilder {
         this.chordSizeMax = chordSizeMax;
     }
 
+    /**
+     * Generate extra notes aligned with the melody slots.
+     * Returns a list of length equal to total number of melody slots (sum of melodies[i].length).
+     * Each entry is either "" (no extra) or a note string (may be lowercase to indicate next-chord placement).
+     */
+    public List<String> generateExtraNotes(List<ArrayList<String>> chords, String[][] melodies) {
+        List<String> extras = new ArrayList<>();
+        // total slots
+        for (int c = 0; c < chords.size(); c++) {
+            ArrayList<String> chord = chords.get(c);
+            int slots = melodies[c].length;
+            for (int s = 0; s < slots; s++) {
+                double p = r.nextDouble();
+                if (p < 0.30) { // 30% chance to place an extra note
+                    String note;
+                    if (chord.size() > 0 && r.nextDouble() < 0.7) {
+                        // prefer chord tones
+                        note = chord.get(r.nextInt(chord.size()));
+                        // occasionally mark as lower-case to place it in the next chord
+                        if (r.nextDouble() < 0.10) note = note.toLowerCase();
+                    } else {
+                        // pick a scale tone
+                        note = scale[r.nextInt(scale.length)];
+                    }
+                    extras.add(note);
+                } else {
+                    extras.add("");
+                }
+            }
+        }
+        return extras;
+    }
+
     public void setScale(String[] scale) {
         this.scale = scale;
     }

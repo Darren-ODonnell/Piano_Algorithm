@@ -231,33 +231,30 @@ public class Driver {
     private void playMusic(String[][] melody, ArrayList<ArrayList<String>> chords) throws MidiUnavailableException {
 
         //Middle C is 60 // 24 is start of piano at C// 107 is end of piano at B
-        int timeCount = 0;
-        String secondaryNoteChr = "";
-        time.setSecondaryNoteDuration();
+        // Pre-compute extra notes aligned to the melody slots if not already present
+        int totalSlots = 0;
+        for (int i = 0; i < melody.length; i++) totalSlots += melody[i].length;
+        if (extraNotes == null || extraNotes.size() != totalSlots) {
+            extraNotes = chordBuilder.generateExtraNotes(chords, melody);
+        }
+
+        int globalIndex = 0;
 
         for(int set = 0; set < chords.size(); set++) {
             randomiseMultiplier();
             playChord(chords.get(set), multiplierLeft);
 
             for (int note = 0; note < melody[set].length; note++) {
-
-                if(timeCount == time.getSecondaryNoteDuration()){
-                    int num = r.nextInt(8);
-                    // System.out.print("Extra note: ");
-
-                    // // The multiplier is -1 compared to regular melody to avoid clashing of notes
-                    // if (Character.isLowerCase(scale[num].charAt(0))) {
-                    //     secondaryNoteChr = scale[num].toUpperCase();
-                    //     playNote(secondaryNoteChr, multiplierRight);
-                    // }else{
-                    //     secondaryNoteChr = scale[num];
-                    //     playNote(secondaryNoteChr, multiplierRight-1);
-                    // }
-                    // extraNotes.add(secondaryNoteChr);
-                    time.setSecondaryNoteDuration();
-                    timeCount = 0;
-                }else{
-                    extraNotes.add("");
+                // Play precomputed extra note for this global slot, if any
+                String extra = extraNotes.size() > globalIndex ? extraNotes.get(globalIndex) : "";
+                if (!extra.isEmpty()) {
+                    System.out.print("Extra note: ");
+                    if (Character.isLowerCase(extra.charAt(0))) {
+                        String sec = extra.toUpperCase();
+                        playNote(sec, multiplierRight);
+                    } else {
+                        playNote(extra, multiplierRight-1);
+                    }
                 }
 
                 char noteChr = melody[set][note].charAt(0);
@@ -277,14 +274,9 @@ public class Driver {
                     endNote(melody[set][note-2], multiplierRight);
                     endNote(melody[set][note-2], multiplierRight+1);
                 }
-                timeCount+=250;
+                globalIndex++;
+            }
 
-            }
-            // The player becomes clogged with secondaryNotes and doesn't sound appealing without this
-            if(!secondaryNoteChr.isEmpty()) {
-                endNote(secondaryNoteChr, multiplierRight);
-                endNote(secondaryNoteChr, multiplierRight+1);
-            }
             endChord(chords.get(set));
         }
     }
