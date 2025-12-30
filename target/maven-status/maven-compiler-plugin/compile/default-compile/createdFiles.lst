@@ -1,6 +1,9 @@
 Driver.class
 CompleteMelody.class
-Harmonics.class
 Time.class
-FileHandling.class
+MidiHelper.class
 Scales.class
+Harmonics.class
+MelodyBuilder.class
+FileHandling.class
+ChordBuilder.class

@@ -7,12 +7,12 @@ import java.io.IOException;
 import java.util.*;
 
 public class Driver {
-    private final Synthesizer midiSynth = MidiSystem.getSynthesizer();
     private final HashMap<String, Integer> notes = new HashMap<>();
-    private final Instrument[] instr = midiSynth.getDefaultSoundbank().getInstruments();
-    private final MidiChannel[] mChannels = midiSynth.getChannels();
+    private MidiHelper midi;
 
     private final Random r;
+    private ChordBuilder chordBuilder;
+    private MelodyBuilder melodyBuilder;
 
     Time time;
     Scales scales = new Scales();
@@ -43,12 +43,16 @@ public class Driver {
 
     public Driver() throws MidiUnavailableException {
 
-        initSynth();
+        midi = new MidiHelper();
         init();
         initTiming();
 
-        time = new Time();
-        r = new Random();
+    time = new Time();
+    r = new Random();
+
+    // initialize builders that encapsulate melody/chord logic
+    chordBuilder = new ChordBuilder(r, scale, chordSizeMax);
+    melodyBuilder = new MelodyBuilder(scales, scale, r, melodyLength, timeSignature, time);
 
         if(playRandom) {
             playRandomSong();
@@ -98,15 +102,12 @@ public class Driver {
 
         // List of chords
         for(int i = 0; i < chordAmount; i++){
-
-            chord = buildChord();
-
+            chord = chordBuilder.buildChord();
             chords.add(chord);
-
         }
-        melody = createMelody();
 
-        melodies = getQuavers(melody);
+        melody = melodyBuilder.createMelody();
+        melodies = melodyBuilder.getQuavers(melody);
 
         display(melodies, chords);
         playMusic(melodies, chords);
@@ -120,13 +121,7 @@ public class Driver {
         System.out.println("Extra Notes: " + extraNotes.toString());
     }
 
-    private void initSynth() throws MidiUnavailableException {
-        Synthesizer synthesizer = MidiSystem.getSynthesizer();
-        Instrument[] instruments = synthesizer.getDefaultSoundbank().getInstruments();
-        MidiChannel[] mChannels = synthesizer.getChannels();
-
-        synthesizer.loadInstrument(instruments[0]);
-    }
+    // MIDI initialization is handled by MidiHelper
 
     private void initTiming(){
         Time.setTimeSignature(timeSignature);
@@ -135,93 +130,31 @@ public class Driver {
     }
 
     private void init() {
-        try {
-            midiSynth.open();
-        } catch (MidiUnavailableException e) {
-            e.printStackTrace();
-        }
-
-        midiSynth.loadInstrument(instr[0]);//load an instrument
+        // notes map
         notes.put("C",1);notes.put("C#",2);notes.put("D",3);
         notes.put("D#",4);notes.put("E",5);notes.put("F",6);
         notes.put("F#",7);notes.put("G",8);notes.put("G#",9);
         notes.put("A",10);notes.put("A#",2);notes.put("B",12);
     }
 
-    private ArrayList<String> buildChord() {
-        available = new ArrayList<>(Arrays.asList(scale));
-        ArrayList<String> chord = new ArrayList<>();
-        // List of Notes for Individual Chord
-        int chordSize = r.nextInt(chordSizeMax)+2;
-        int x = 0;
-
-        while(x < chordSize) {
-            chord = addToChord(chord);
-            x++;
-        }
-        return chord;
-    }
-    private ArrayList<String> addToChord(ArrayList<String> chord){
-        String preNote;
-        String postNote;
-        boolean noChange = true;
-        while(noChange){
-            int note = 0;
-            if(available.size() > 0) {
-                note = r.nextInt(available.size());
-                String noteStr = available.get(note);
-                int noteIndex = findIndex(noteStr);
-
-                preNote = getNote(noteIndex-1);
-                postNote = getNote(noteIndex+1);
-
-                if(postNote != null){
-                    available.remove(postNote);
-                }
-
-                chord.add(available.get(note));
-                available.remove(note);
-
-                if(preNote != null){
-                    available.remove(preNote);
-                }
-            }
-            noChange = false;
-        }
-        Collections.sort(chord);
-        return chord;
-    }
-
-    private String getNote(int i) {
-        if(i < 0 || i > 7) {
-            return null;
-        }else{
-            return scale[i];
-        }
-    }
-
-    private int findIndex(String noteStr) {
-        for(int i = 0; i < scale.length; i++){
-            if(scale[i].equals(noteStr)){
-                return i;
-            }
-        }
-        return -1;//never used
-    }
+    // Chord construction is handled by ChordBuilder
 
 
     private void playNote(String note, int multiplier){
         System.out.println(note);
-        mChannels[0].noteOn(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 30);//On channel 0, play note number 60 with velocity 100
+        int n = notes.get(note);
+        midi.noteOn(FIRST_NOTE + (n + (12 * multiplier)), 30);//On channel 0, play note number with velocity 30
     }
     private void endNote(String note, int multiplier){
-                mChannels[0].noteOff(FIRST_NOTE + (notes.get(note) + (12 * multiplier)), 30);//turn off the note
+                int n = notes.get(note);
+                midi.noteOff(FIRST_NOTE + (n + (12 * multiplier)), 30);//turn off the note
 
     }
 
     private void endChord(List<String> chord){
         for(int i = 0; i < chord.size(); i++) {
-            mChannels[0].noteOff(FIRST_NOTE + (notes.get(chord.get(i))));//turn off the note
+            int n = notes.get(chord.get(i));
+            midi.noteOff(FIRST_NOTE + n);
         }
 
     }
@@ -235,10 +168,12 @@ public class Driver {
 
             if(Character.isLowerCase(note)) {// lower case character inside a chord signifies that the note is in the next chord
                 chord.set(i, chord.get(i).toUpperCase());
-                mChannels[0].noteOn(FIRST_NOTE + (notes.get(chord.get(i)) + (12 * (multiplier+1))), 30);
+                int n = notes.get(chord.get(i));
+                midi.noteOn(FIRST_NOTE + (n + (12 * (multiplier+1))), 30);
 
             }else {
-                mChannels[0].noteOn(FIRST_NOTE + (notes.get(chord.get(i)) + (12 * multiplier)), 30);
+                int n = notes.get(chord.get(i));
+                midi.noteOn(FIRST_NOTE + (n + (12 * multiplier)), 30);
             }
         }
         System.out.println();
@@ -267,27 +202,7 @@ public class Driver {
 
     }
 
-    private String[] createMelody() {
-        String[] melody = new String[melodyLength];
-        String[] temp = scales.getArpeggio(scale);
-
-        //To be continued
-        /**
-         * Add in a for loop around the rest so that an arpeggio plays every 2*timeSignature
-         */
-
-        for(int i = 0 ; i < melody.length; i++){
-            if(i % (timeSignature*2) < 4) {
-                melody[i] = temp[i % timeSignature];
-
-            }else {
-                int num = r.nextInt(8);
-                melody[i] = scale[num];
-            }
-        }
-
-        return melody;
-    }
+    // Melody generation is handled by MelodyBuilder
 
     public void display(String[][] melody, ArrayList<ArrayList<String>> chords) {
         String rightHand = "\n\nRight Hand: \n";
@@ -311,43 +226,7 @@ public class Driver {
         }
     }
 
-    public String[][] getQuavers(String[] notes){
-        int quaver = 0;
-        return method(notes, quaver);
-    }
-    public String[][] getCrotchets(String[] notes){
-        int crotchet = 1;
-        return method(notes, crotchet);
-    }
-    public String[][] getMinims(String[] notes) {
-        int minim = 2;
-        return method(notes, minim);
-    }
-    public String[][] getSemiBreves(String[] notes) {
-        int semibreve = 3;
-        return method(notes, semibreve);
-    }
-
-    public String[][] method(String[] notes, int note){
-        int timeCounter = notes.length/Time.timeSignature/Time.noteLengths[note];
-        String[][] melody = new String[timeCounter][Time.timeSignature];
-            time.setNoteDuration(Time.noteLengths[note]);// noteLength[0] is quaver
-
-        /**
-         *  Outer loop, needs to go 4 times
-         *  Inner loop, goes 8 times for every iteration of the outer loop
-         */
-            for(int i = 0; i < timeCounter; i++){
-            for(int x = 0; x < Time.timeSignature/Time.noteLengths[note]; x++){
-                melody[i][x] = notes[(Time.timeSignature*i)+x];
-//                System.out.println("note:" + notes[(Time.timeSignature*i)+x]);
-//                System.out.println("Size of notes " + notes.length);
-            }
-        }
-
-            System.out.println("Melody : " + Arrays.deepToString(melody));
-            return melody;
-    }
+    // Melody length/format conversion moved to MelodyBuilder
 
     private void playMusic(String[][] melody, ArrayList<ArrayList<String>> chords) throws MidiUnavailableException {
 
@@ -364,17 +243,17 @@ public class Driver {
 
                 if(timeCount == time.getSecondaryNoteDuration()){
                     int num = r.nextInt(8);
-                    System.out.print("Extra note: ");
+                    // System.out.print("Extra note: ");
 
-                    // The multiplier is -1 compared to regular melody to avoid clashing of notes
-                    if (Character.isLowerCase(scale[num].charAt(0))) {
-                        secondaryNoteChr = scale[num].toUpperCase();
-                        playNote(secondaryNoteChr, multiplierRight);
-                    }else{
-                        secondaryNoteChr = scale[num];
-                        playNote(secondaryNoteChr, multiplierRight-1);
-                    }
-                    extraNotes.add(secondaryNoteChr);
+                    // // The multiplier is -1 compared to regular melody to avoid clashing of notes
+                    // if (Character.isLowerCase(scale[num].charAt(0))) {
+                    //     secondaryNoteChr = scale[num].toUpperCase();
+                    //     playNote(secondaryNoteChr, multiplierRight);
+                    // }else{
+                    //     secondaryNoteChr = scale[num];
+                    //     playNote(secondaryNoteChr, multiplierRight-1);
+                    // }
+                    // extraNotes.add(secondaryNoteChr);
                     time.setSecondaryNoteDuration();
                     timeCount = 0;
                 }else{
