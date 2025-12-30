@@ -39,7 +39,7 @@ public class Driver {
     FileHandling fh = new FileHandling();
     CompleteMelody completeMelody = new CompleteMelody();
 
-    boolean playRandom = false;
+    boolean playRandom = true;
 
     public Driver() throws MidiUnavailableException {
 
@@ -425,17 +425,17 @@ public class Driver {
 
                     //Play extra note
 
-                    if(!extraNotes.get(timeCount).equals("")){// "" marks the pauses between extra notes
-                        System.out.print("Extra note: ");
+                    // if(!extraNotes.get(timeCount).equals("")){// "" marks the pauses between extra notes
+                    //     System.out.print("Extra note: ");
 
-                        if(Character.isLowerCase(extraNotes.get(timeCount).charAt(0))){
-                            secondaryNoteChr = extraNotes.get(timeCount).toUpperCase();
-                            playNote(secondaryNoteChr, multiplierRight);
-                        }else{
-                            secondaryNoteChr = extraNotes.get(timeCount);
-                            playNote(secondaryNoteChr, multiplierRight-1);
-                        }
-                    }
+                    //     if(Character.isLowerCase(extraNotes.get(timeCount).charAt(0))){
+                    //         secondaryNoteChr = extraNotes.get(timeCount).toUpperCase();
+                    //         playNote(secondaryNoteChr, multiplierRight);
+                    //     }else{
+                    //         secondaryNoteChr = extraNotes.get(timeCount);
+                    //         playNote(secondaryNoteChr, multiplierRight-1);
+                    //     }
+                    // }
                     sleep(time.getNoteDuration());
 
                     playNote(melodies[chordNum][note],multipliersRight.get(chordNum));
